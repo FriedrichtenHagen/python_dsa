@@ -47,7 +47,7 @@ def simulation(num_seconds, pages_per_minute):
             task = Task(current_second)
             print_queue.enqueue(task)
 
-        if (not lab_printer.busy()) and (print_queue.not_empty()):
+        if (not lab_printer.busy()) and (not print_queue.not_empty()):
             nexttask = print_queue.dequeue()
             waiting_times.append(nexttask.wait_time(current_second))
             lab_printer.start_next(nexttask)
