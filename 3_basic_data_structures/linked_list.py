@@ -34,7 +34,13 @@ class UnorderedList:
     def __init__(self):
         self.head = None
 
-
+    def __str__(self):
+        current = self.head
+        unordered_list = []
+        while current is not None:
+            unordered_list.append(current._data)
+            current = current._next
+        return unordered_list
 
     def is_empty(self):
         return self.head == None
@@ -84,8 +90,25 @@ class UnorderedList:
             current = current._next
         current._next = Node(item)
 
-    def insert(self, item, index):
-        pass
+    def insert(self, item, insert_index):
+        current = self.head
+        previous = None
+        current_index = 0
+        while current is not None:
+            if current_index == insert_index:
+                # insert here
+                inserted_node = Node(item)
+                inserted_node._next = current._next
+                if previous is None:
+                    self.head = inserted_node
+                else:
+                    previous._next = inserted_node
+                break
+            else:
+                previous = current
+                current = current._next
+                current_index += 1
+        
     def index(self, item):
         pass
     def pop(self):
@@ -99,6 +122,8 @@ my_list.add(17)
 my_list.add(93)
 my_list.add(26)
 my_list.add(54)
-print(my_list.size())
+print(my_list.__str__())
 my_list.append(34)
-print(my_list.size())
+print(my_list.__str__())
+my_list.insert('asdf', 1)
+print(my_list.__str__())
