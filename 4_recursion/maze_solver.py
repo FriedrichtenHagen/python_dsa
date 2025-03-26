@@ -21,7 +21,9 @@ class Maze():
 class Adventurer():
     def __init__(self, maze):
         self.maze = maze.maze
+        self.maze_obj = maze
         self.starting_position = self.find_starting_point()
+        self.found_exit = False 
 
     def find_starting_point(self):
         for row_index, row in enumerate(self.maze):
@@ -35,37 +37,47 @@ class Adventurer():
         self.attempt_steps(self.starting_position)
 
     def attempt_steps(self, position):
+        if self.found_exit:
+            return
         print(f'Current pos: row {position[0]}, column {position[1]}')
+        print(self.maze_obj)
+        print(' ')
         # base case: goal is reached
         if self.maze[position[0]][position[1]] == 'X':
-            return position
-        # mark previously reached fields
-        self.maze[position[0]][position[1]] = '.'
+            print('goal reached')
+            self.found_exit = True
+        else:
+            # mark reached fields
+            self.maze[position[0]][position[1]] = '.'
+            
+            # go through all 4 possible steps:
+            # down
+            new_position = self.move_in_direction(position, 1, 0)
+            if self.field_is_valid(new_position):
+                self.attempt_steps(new_position)
+            # up
+            new_position = self.move_in_direction(position, -1, 0)
+            if self.field_is_valid(new_position):
+                self.attempt_steps(new_position)
+            # right    
+            new_position = self.move_in_direction(position, 0, 1)
+            if self.field_is_valid(new_position):
+                self.attempt_steps(new_position)
+            # left
+            new_position = self.move_in_direction(position, 0, -1)
+            if self.field_is_valid(new_position):
+                self.attempt_steps(new_position)
 
-        # go through all 4 possible steps:
-        # down
+    def move_in_direction(self, position, row_change, col_change):
         new_position = [None, None]
-        new_position[0] = position[0] + 1
-        new_position[1] = position[1] + 0
-        if self.field_is_valid(new_position):
-            self.attempt_steps(new_position)
-        # up            
-        # if self.maze[position[0] - 1][position[1]]:
-        #     position[0] = position[0] - 1
-        #     position[1] = position[1] + 0
-        # # right
-        # if self.maze[position[0]][position[1] + 1]:
-        #     position[0] = position[0] + 0
-        #     position[1] = position[1] + 1
-        #     # left
-        # if self.maze[position[0]][position[1] - 1]:    
-        #     position[0] = position[0] + 0
-        #     position[1] = position[0] - 1
-
-
+        new_position[0] = position[0] + row_change
+        new_position[1] = position[1] + col_change
+        return new_position
 
     def field_is_valid(self, position):
         '''make sure the field is a valid part of the maze'''
+        if position[0] < 0 or position[0] >= len(self.maze) or position[1] < 0 or position[1] >= len(self.maze[0]):
+            return False
         field_is_valid = self.maze[position[0]][position[1]] and self.maze[position[0]][position[1]] != '+' and self.maze[position[0]][position[1]] != '.'
         return field_is_valid
 
